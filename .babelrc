@@ -1,14 +1,14 @@
 {
   "env": {
     "development": {
-      "presets": ["env"],
+      "presets": ["env", "node6"],
       "plugins": [
         "add-module-exports",
         "transform-object-rest-spread"
       ]
     },
     "production": {
-      "presets": ["env", "minify"],
+      "presets": ["env", "node6", "minify"],
       "plugins": [
         "add-module-exports",
         "transform-object-rest-spread"
