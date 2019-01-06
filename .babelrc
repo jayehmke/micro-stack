@@ -3,7 +3,8 @@
     "development": {
       "presets": ["env"],
       "plugins": [
-        "add-module-exports"
+        "add-module-exports",
+        "transform-object-rest-spread"
       ]
     },
     "production": {
