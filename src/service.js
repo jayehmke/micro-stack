@@ -1,9 +1,7 @@
 const debug = require('debug');
 
-const logger = debug('MICRO_STACK.SERVICE');
-
 const Service = function (options) {
-  const model = options.model;
+  const Model = options.model;
 
 
   this.create = async (params) => {
@@ -18,7 +16,7 @@ const Service = function (options) {
   };
 
   this.findById = function (params) {
-    return new Promise((res, rej) => model.get(params.id)
+    return new Promise((res, rej) => Model.get(params.id)
       .then((entity) => {
         res(entity.plain());
       })
@@ -33,7 +31,7 @@ const Service = function (options) {
   };
 
   this.findByOwner = params => new Promise((res, rej) => {
-    const query = model.query()
+    const query = Model.query()
       .filter('ownerId', '=', params.ownerId)
       .limit(10);
     if (params.sku) {
@@ -41,8 +39,7 @@ const Service = function (options) {
     }
     query.run()
       .then((response) => {
-        const entities = response.entities;
-        const nextPageCursor = response.nextPageCursor; // not present if no more results
+        const { entities } = response;
         res(entities);
       })
       .catch((e) => {
@@ -52,11 +49,11 @@ const Service = function (options) {
 
   this.update = async (params) => {
     const { id } = params;
-    const modelUpdates = await model.update(id, model.sanitize(params));
+    const modelUpdates = await Model.update(id, Model.sanitize(params));
     return modelUpdates.plain();
   };
 
-  this.delete = model.delete;
+  this.delete = Model.delete;
 };
 
 module.exports = Service;

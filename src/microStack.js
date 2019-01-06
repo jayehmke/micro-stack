@@ -1,6 +1,6 @@
 const Controller = require('./controller');
 
-const MicroStack = function (options) {
+const MicroStack = function MicroStack(options) {
   if (!(this instanceof MicroStack)) {
     return new MicroStack();
   }
@@ -13,6 +13,7 @@ const MicroStack = function (options) {
   this.gets = controller.reads;
   this.update = controller.update;
   this.delete = controller.delete;
+  return this;
 };
 
 module.exports = MicroStack;

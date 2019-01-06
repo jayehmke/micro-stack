@@ -6,12 +6,12 @@ const Controller = function (options) {
     model: options.model,
   });
 
-  this.create = function (req, res) {
+  this.create = (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    service.create(req.body)
+    return service.create(req.body)
       .then((data) => {
         res.json(data);
       })
@@ -20,7 +20,7 @@ const Controller = function (options) {
       });
   };
 
-  this.read = function (req, res) {
+  this.read = (req, res) => {
     service.findById({
       id: req.params.id,
     })
@@ -44,7 +44,7 @@ const Controller = function (options) {
     const { findByOwner, findByIds } = service;
     const serviceCall = query.id_like ? params => findByIds(params.id_like.split('|')) : params => findByOwner(params);
 
-    serviceCall(req.query)
+    return serviceCall(req.query)
       .then((data) => {
         res.set({
           'X-Total-Count': data.length
