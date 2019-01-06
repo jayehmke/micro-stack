@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/flexdinesh/micro-stack#readme",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "@google-cloud/pubsub": "^0.22.2",
     "debug": "^4.1.1",
     "express-validator": "^5.3.1",
@@ -45,7 +46,6 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-minify": "^0.3.0",
     "babel-preset-node6": "^11.0.0",
