@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
@@ -11,11 +11,11 @@
     "test:watch": "npm test -- --watch",
     "test:examples": "node examples/",
     "cover": "istanbul cover _mocha -- --require babel-core/register --require babel-polyfill --recursive",
-    "build": "cross-env BABEL_ENV=production babel src --out-dir lib",
+    "build": "cross-env BABEL_ENV=production babel src --out-dir lib --plugins transform-object-rest-spread",
     "prepublish": "npm run clean && npm run lint && npm run test && npm run build",
     "bump": "bump --prompt --tag --push --all",
     "lint": "echo 'no'",
-    "release": "npm run upgrade && npm run bump && npm publish",
+    "release": "npm run upgrade && npm run bump && npm publish --access=public",
     "upgrade": "npm-check -u"
   },
   "files": [
