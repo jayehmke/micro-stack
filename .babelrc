@@ -1,17 +1,19 @@
 {
   "env": {
     "development": {
-      "presets": ["env", "node6"],
+      "presets": ["env"],
       "plugins": [
         "add-module-exports",
-        "transform-object-rest-spread"
+        "transform-object-rest-spread",
+        "transform-async-to-generator"
       ]
     },
     "production": {
-      "presets": ["env", "node6", "minify"],
+      "presets": ["env", "minify"],
       "plugins": [
         "add-module-exports",
-        "transform-object-rest-spread"
+        "transform-object-rest-spread",
+        "transform-async-to-generator"
       ]
     }
   }
