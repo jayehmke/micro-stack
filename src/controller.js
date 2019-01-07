@@ -93,6 +93,8 @@ const controller = function controller(options) {
         }
       });
   };
+
+  return instance;
 };
 
 module.exports = controller;
