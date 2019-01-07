@@ -5,4 +5,4 @@ if (!global._babelPolyfill) {
 }
 exports.pubsub = require('./pubSub');
 exports.MicroStack = require('./microStack');
-exports.Service = require('./service');
+exports.createService = require('./service');
