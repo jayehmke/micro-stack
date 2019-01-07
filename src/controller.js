@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator/check');
-const service = require('./service');
+const createService = require('./service');
 
-const controller = function controller(options) {
+const createController = function createController(options) {
   const instance = {};
-  const modelService = service({
+  const service = createService({
     model: options.model,
   });
 
@@ -12,7 +12,7 @@ const controller = function controller(options) {
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    return modelService.create(req.body)
+    return service.create(req.body)
       .then((data) => {
         res.json(data);
       })
@@ -22,7 +22,7 @@ const controller = function controller(options) {
   };
 
   instance.read = (req, res) => {
-    modelService.findById({
+    service.findById({
       id: req.params.id,
     })
       .then((data) => {
@@ -42,8 +42,8 @@ const controller = function controller(options) {
       return res.status(422).json({ errors: errors.array() });
     }
     const { query } = req;
-    const { findByOwner, findByIds } = modelService;
-    const serviceCall = query.id_like ? params => findByIds(params.id_like.split('|')) : params => findByOwner(params);
+    const { findList, findByIds } = service;
+    const serviceCall = query.id_like ? params => findByIds(params.id_like.split('|')) : params => findList(params);
 
     return serviceCall(req.query)
       .then((data) => {
@@ -68,7 +68,7 @@ const controller = function controller(options) {
       ...req.body,
     };
 
-    modelService.update(params)
+    return service.update(params)
       .then(data => res.json(data))
       .catch(e => res.status(500).json({
         error: e.code,
@@ -79,12 +79,12 @@ const controller = function controller(options) {
     const { id } = req.params;
     let product;
     try {
-      product = await modelService.findById({ id });
+      product = await service.findById({ id });
     } catch (error) {
       res.status(500).json({ error });
     }
 
-    modelService.delete(id)
+    service.delete(id)
       .then((response) => {
         if (!response.success) {
           res.status(404).json({});
@@ -97,4 +97,4 @@ const controller = function controller(options) {
   return instance;
 };
 
-module.exports = controller;
+module.exports = createController;

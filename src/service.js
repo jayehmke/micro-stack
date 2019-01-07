@@ -1,4 +1,4 @@
-const service = function Service(options) {
+const createService = function Service(options) {
   const Model = options.model;
   const instance = {};
 
@@ -26,13 +26,14 @@ const service = function Service(options) {
     return Promise.all(findPromises);
   };
 
-  instance.findByOwner = params => new Promise((res, rej) => {
+  instance.findList = params => new Promise((res, rej) => {
     const query = Model.query()
-      .filter('ownerId', '=', params.ownerId)
       .limit(10);
-    if (params.sku) {
-      query.filter('sku', '=', params.sku);
-    }
+
+    Object.keys(params).forEach((key) => {
+      query.filter(key, '=', params[key]);
+    });
+
     query.run()
       .then((response) => {
         const { entities } = response;
@@ -54,4 +55,4 @@ const service = function Service(options) {
   return instance;
 };
 
-module.exports = service;
+module.exports = createService;
