@@ -1,17 +1,18 @@
 const { validationResult } = require('express-validator/check');
-const Service = require('./service');
+const service = require('./service');
 
-const Controller = function Controller(options) {
-  const service = new Service({
+const controller = function controller(options) {
+  const instance = {};
+  const modelService = service({
     model: options.model,
   });
 
-  this.create = (req, res) => {
+  instance.create = (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    return service.create(req.body)
+    return modelService.create(req.body)
       .then((data) => {
         res.json(data);
       })
@@ -20,8 +21,8 @@ const Controller = function Controller(options) {
       });
   };
 
-  this.read = (req, res) => {
-    service.findById({
+  instance.read = (req, res) => {
+    modelService.findById({
       id: req.params.id,
     })
       .then((data) => {
@@ -35,13 +36,13 @@ const Controller = function Controller(options) {
       });
   };
 
-  this.reads = (req, res) => {
+  instance.reads = (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
     const { query } = req;
-    const { findByOwner, findByIds } = service;
+    const { findByOwner, findByIds } = modelService;
     const serviceCall = query.id_like ? params => findByIds(params.id_like.split('|')) : params => findByOwner(params);
 
     return serviceCall(req.query)
@@ -56,7 +57,7 @@ const Controller = function Controller(options) {
       });
   };
 
-  this.update = async (req, res) => {
+  instance.update = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -67,23 +68,23 @@ const Controller = function Controller(options) {
       ...req.body,
     };
 
-    service.update(params)
+    modelService.update(params)
       .then(data => res.json(data))
       .catch(e => res.status(500).json({
         error: e.code,
       }));
   };
 
-  this.delete = async (req, res) => {
+  instance.delete = async (req, res) => {
     const { id } = req.params;
     let product;
     try {
-      product = await service.findById({ id });
+      product = await modelService.findById({ id });
     } catch (error) {
       res.status(500).json({ error });
     }
 
-    service.delete(id)
+    modelService.delete(id)
       .then((response) => {
         if (!response.success) {
           res.status(404).json({});
@@ -94,4 +95,4 @@ const Controller = function Controller(options) {
   };
 };
 
-module.exports = Controller;
+module.exports = controller;
