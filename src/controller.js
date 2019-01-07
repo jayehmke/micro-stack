@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator/check');
 const Service = require('./service');
 
-const Controller = function (options) {
+const Controller = function Controller(options) {
   const service = new Service({
     model: options.model,
   });

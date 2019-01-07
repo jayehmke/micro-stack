@@ -1,10 +1,9 @@
 // Imports the Google Cloud client library
 const { PubSub } = require('@google-cloud/pubsub');
 // Your Google Cloud Platform project ID
-const config = require('./config');
-
 const debug = require('debug');
 const Joi = require('joi');
+const config = require('./config');
 
 const projectId = config.GOOGLE_PROJECT_ID;
 const logger = debug('UTILS.PUBSUB');
@@ -36,7 +35,7 @@ const sendPubSub = async (options) => {
       .topic(topic)
       .publisher()
       .publish(dataBuffer);
-    console.log(`Message ${messageId} published.`);
+    logger(`Message ${messageId} published.`);
   } catch (e) {
     logger(e);
   }
