@@ -58,10 +58,10 @@ const createService = function Service(options) {
     };
 
     const { entities } = await Model.list(queryOptions);
-    const count = await Model.list(countOptions).entities.length();
+    const countEntities = await Model.list(countOptions);
     return {
       entities,
-      count,
+      count: countEntities.entities.length(),
     };
   };
 
