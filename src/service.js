@@ -26,23 +26,44 @@ const createService = function Service(options) {
     return Promise.all(findPromises);
   };
 
-  instance.findList = params => new Promise((res, rej) => {
-    const query = Model.query()
-      .limit(10);
+  instance.findList = async (params) => {
+    const { _start, _end, ownerId } = params;
+    if (!ownerId) {
+      return [];
+    }
+
+    const queryOptions = {
+      limit: _start || 10 - _end || 0,
+      offset: _start || 0,
+      // order: { property: params._sort || "id", descending: params.descending === "DESC" },
+      filters: []
+    };
+
+    // const filtered = Object.keys(params)
+    //   .filter(key => key.startsWith('_') !== true)
+    //   .reduce((obj, key) => {
+    //     const newObj = {};
+    //     newObj[key] = params[key];
+    //     return newObj;
+    //   }, {});
 
     Object.keys(params).forEach((key) => {
-      query.filter(key, '=', params[key]);
+      if (key.startsWith('_') !== true) {
+        queryOptions.filters.push([key, params[key]]);
+      }
     });
+    const countOptions = {
+      ...queryOptions,
+      limit: 99999,
+    };
 
-    query.run()
-      .then((response) => {
-        const { entities } = response;
-        res(entities);
-      })
-      .catch((e) => {
-        rej(e);
-      });
-  });
+    const { entities } = await Model.list(queryOptions);
+    const count = await Model.list(countOptions).entities.length();
+    return {
+      entities,
+      count,
+    };
+  };
 
   instance.update = async (params) => {
     const { id } = params;

@@ -37,6 +37,7 @@ const createController = function createController(options) {
   };
 
   instance.reads = (req, res) => {
+    // ?_end=10&_order=DESC&_sort=id&_start=0&ownerId=5700921115803648
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -48,9 +49,9 @@ const createController = function createController(options) {
     return serviceCall(req.query)
       .then((data) => {
         res.set({
-          'X-Total-Count': data.length
+          'X-Total-Count': data.count,
         });
-        res.send(data);
+        res.send(data.entities);
       })
       .catch((e) => {
         res.json(e.message);
