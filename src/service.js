@@ -55,13 +55,14 @@ const createService = function Service(options) {
     const countOptions = {
       ...queryOptions,
       limit: 99999,
+      offset: 0,
     };
 
     const { entities } = await Model.list(queryOptions);
     const countEntities = await Model.list(countOptions);
     return {
       entities,
-      count: countEntities.entities.length(),
+      count: countEntities.entities.length,
     };
   };
 
