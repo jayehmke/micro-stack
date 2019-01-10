@@ -51,7 +51,7 @@ const createController = function createController(options) {
         res.set({
           'X-Total-Count': data.count,
         });
-        res.send(data.entities);
+        res.send(data.entities || data);
       })
       .catch((e) => {
         res.json(e.message);
