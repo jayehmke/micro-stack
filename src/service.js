@@ -22,7 +22,7 @@ const createService = function Service(options) {
     }));
 
   instance.findByIds = (ids) => {
-    const findPromises = ids.map(id => this.findById({ id }));
+    const findPromises = ids.map(id => instance.findById({ id }));
     return Promise.all(findPromises);
   };
 
