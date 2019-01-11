@@ -27,10 +27,7 @@ const createService = function Service(options) {
   };
 
   instance.findList = async (params) => {
-    const { _start, _end, ownerId } = params;
-    if (!ownerId) {
-      return [];
-    }
+    const { _start, _end } = params;
 
     const queryOptions = {
       limit: _start || 10 - _end || 0,
