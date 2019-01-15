@@ -48,9 +48,7 @@ const createController = function createController(options) {
 
     return serviceCall(req.query)
       .then((data) => {
-        res.set({
-          'X-Total-Count': data.count || data.length,
-        });
+        res.set('X-Total-Count', data.count || data.length);
         res.send(data.entities || data);
       })
       .catch((e) => {

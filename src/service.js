@@ -1,5 +1,7 @@
-const createService = function Service(options) {
-  const Model = options.model;
+import createCountModel from './countModel';
+
+const createService = function Service(serviceOptions) {
+  const Model = serviceOptions.model;
   const instance = {};
 
   instance.create = async (params) => {
@@ -26,9 +28,18 @@ const createService = function Service(options) {
     return Promise.all(findPromises);
   };
 
-  instance.findList = async (params) => {
-    const { _start, _end } = params;
+  instance.findCount = (params) => {
+    const countOptions = {
+      ...params,
+      limit: 99999,
+      offset: 0,
+    };
+    return Model.list(countOptions);
+  };
 
+  instance.findList = async (params, options = {}) => {
+    const { _start, _end } = params;
+    const { includeCount = true } = options;
     const queryOptions = {
       limit: _start || 10 - _end || 0,
       offset: _start || 0,
@@ -49,14 +60,9 @@ const createService = function Service(options) {
         queryOptions.filters.push([key, params[key]]);
       }
     });
-    const countOptions = {
-      ...queryOptions,
-      limit: 99999,
-      offset: 0,
-    };
 
     const { entities } = await Model.list(queryOptions);
-    const countEntities = await Model.list(countOptions);
+    const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
     return {
       entities,
       count: countEntities.entities.length,
