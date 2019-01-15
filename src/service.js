@@ -1,4 +1,4 @@
-import createCountModel from './countModel';
+// import createCountModel from './countModel';
 
 const createService = function Service(serviceOptions) {
   const Model = serviceOptions.model;
