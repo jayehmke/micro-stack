@@ -80,7 +80,7 @@ const createController = function createController(options) {
     try {
       product = await service.findById({ id });
     } catch (error) {
-      res.status(500).json({ error });
+      return res.status(500).json({ error });
     }
 
     service.delete(id)
