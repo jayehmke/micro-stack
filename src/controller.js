@@ -83,7 +83,7 @@ const createController = function createController(options) {
       return res.status(500).json({ error });
     }
 
-    service.delete(id)
+    return service.delete(id)
       .then((response) => {
         if (!response.success) {
           res.status(404).json({});
