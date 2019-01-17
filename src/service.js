@@ -75,7 +75,7 @@ const createService = function Service(serviceOptions) {
     return modelUpdates.plain();
   };
 
-  instance.delete = Model.delete;
+  instance.delete = id => Model.delete(id);
 
   return instance;
 };

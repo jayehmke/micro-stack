@@ -1,11 +1,11 @@
-const controller = require('./controller');
+const createController = require('./controller');
 
 const MicroStack = function MicroStack(options) {
   if (!(this instanceof MicroStack)) {
     return new MicroStack(options);
   }
 
-  const instanceController = controller({
+  const instanceController = createController({
     model: options.model,
     count: {
       createTable: options.count && options.count.createTables,
