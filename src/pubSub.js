@@ -35,7 +35,7 @@ const sendPubSub = async (options) => {
       .topic(topic)
       .publisher()
       .publish(dataBuffer);
-    logger(`Message ${messageId} published.`);
+    logger(`Message ${messageId} published to topic ${topic}`);
   } catch (e) {
     logger(e);
   }
