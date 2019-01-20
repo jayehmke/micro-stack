@@ -8,7 +8,7 @@ const config = require('./config');
 const projectId = config.GOOGLE_PROJECT_ID;
 const logger = debug('UTILS.PUBSUB');
 
-const sendPubSub = async (options) => {
+const sendPubSub = options => new Promise((res, rej) => {
   const schema = Joi.object().keys({
     data: Joi.object().required(),
     topic: Joi.string().required()
@@ -30,15 +30,18 @@ const sendPubSub = async (options) => {
   // Creates the new topic
   const dataBuffer = Buffer.from(JSON.stringify(data));
 
-  try {
-    const messageId = await pubsub
-      .topic(topic)
-      .publisher()
-      .publish(dataBuffer);
-    logger(`Message ${messageId} published to topic ${topic}`);
-  } catch (e) {
-    logger(e);
-  }
-};
+  pubsub
+    .topic(topic)
+    .publisher()
+    .publish(dataBuffer)
+    .then((messageId) => {
+      logger(`Message ${messageId} published to topic ${topic}`);
+      res(messageId);
+    })
+    .catch((e) => {
+      rej(e);
+    });
+});
+
 
 module.exports = sendPubSub;
