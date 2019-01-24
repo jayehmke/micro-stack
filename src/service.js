@@ -23,6 +23,18 @@ const createService = function Service(serviceOptions) {
       rej(e);
     }));
 
+  instance.findOne = async (params, options) => {
+    try {
+      return Model.findOne(params, null, null, options);
+    } catch (e) {
+      const { code } = e;
+      if (code === 'ERR_ENTITY_NOT_FOUND') {
+        return null;
+      }
+      throw e;
+    }
+  };
+
   instance.findByIds = (ids) => {
     const findPromises = ids.map(id => instance.findById({ id }));
     return Promise.all(findPromises);
