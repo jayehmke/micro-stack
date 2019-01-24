@@ -26,7 +26,7 @@ const createService = function Service(serviceOptions) {
   instance.findOne = async (params, options) => {
     let entity;
     try {
-      entity = Model.findOne(params, null, null, options);
+      entity = await Model.findOne(params, null, null, options);
     } catch (e) {
       const { code } = e;
       if (code === 'ERR_ENTITY_NOT_FOUND') {
