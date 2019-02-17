@@ -26,7 +26,7 @@ const createService = function Service(serviceOptions) {
   instance.findOne = async (params, options) => {
     let entity;
     try {
-      entity = await Model.findOne(params, null, null, options).plain();
+      entity = await Model.findOne(params, null, null, options);
       return entity.plain();
     } catch (e) {
       const { code } = e;
