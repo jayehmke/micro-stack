@@ -52,14 +52,15 @@ const createService = function Service(serviceOptions) {
   };
 
   instance.findList = async (params, options = {}) => {
-    const { _start, _end } = params;
+    const { _start = 0, _end = 10 } = params;
     const { includeCount = true } = options;
     const queryOptions = {
-      limit: _start || 10 - _end || 0,
+      limit: _end - _start,
       offset: _start || 0,
       // order: { property: params._sort || "id", descending: params.descending === "DESC" },
       filters: []
     };
+    console.log('query options', queryOptions);
 
     // const filtered = Object.keys(params)
     //   .filter(key => key.startsWith('_') !== true)
@@ -74,6 +75,9 @@ const createService = function Service(serviceOptions) {
         queryOptions.filters.push([key, params[key]]);
       }
     });
+
+    console.log('QUERY OPTIONS');
+    console.log(queryOptions);
 
     const { entities } = await Model.list(queryOptions);
     const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
