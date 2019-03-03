@@ -1,17 +1,17 @@
-// Imports the Google Cloud client library
-const { PubSub } = require('@google-cloud/pubsub');
-// Your Google Cloud Platform project ID
-const debug = require('debug');
+import * as AWS from 'aws-sdk';
+import debug from 'debug';
+
+const logger = debug('UTILS.SNS');
+
 const Joi = require('joi');
-const config = require('./config');
 
-const projectId = config.GOOGLE_PROJECT_ID;
-const logger = debug('UTILS.PUBSUB');
-
-const sendPubSub = async (options) => {
+const sendPubSub = (options) => {
+  if (!options) {
+    throw new Error('Options are required');
+  }
   const schema = Joi.object().keys({
     data: Joi.object().required(),
-    topic: Joi.string().required()
+    topic: Joi.string().required(),
   });
 
   const { error } = Joi.validate(options, schema);
@@ -19,28 +19,27 @@ const sendPubSub = async (options) => {
   if (error) {
     throw new Error(error);
   }
+  const params = {
+    Message: JSON.stringify(options.data), /* required */
+    TopicArn: `arn:aws:sns:us-east-1:${process.env.SNS_ACCOUNT}:${options.topic}`,
+  };
+  const publishTextPromise = new AWS.SNS({
+    apiVersion: '2010-03-31',
+    region: 'us-east-1',
+  }).publish(params).promise();
 
-  const pubsub = new PubSub({
-    projectId
-  });
-
-  // The name for the new topic
-  const { topic, data } = options;
-
-  // Creates the new topic
-  const dataBuffer = Buffer.from(JSON.stringify(data));
-
-  try {
-    const messageId = await pubsub
-      .topic(topic)
-      .publisher()
-      .publish(dataBuffer);
-    logger(`Message ${messageId} published to topic ${topic}`);
-    return messageId;
-  } catch (e) {
-    logger(e);
-    return e;
-  }
+  return publishTextPromise.then(
+    (data) => {
+      logger(`Message ${params.Message} send sent to the topic ${params.TopicArn}`);
+      logger(`MessageID is ${data.MessageId}`);
+      return data;
+    }
+  ).catch(
+    (err) => {
+      logger(err, err.stack);
+      return err;
+    }
+  );
 };
 
-module.exports = sendPubSub;
+export default sendPubSub;

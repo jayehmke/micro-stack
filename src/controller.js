@@ -48,8 +48,8 @@ const createController = function createController(options) {
 
     return serviceCall(req.query)
       .then((data) => {
-        res.set('X-Total-Count', data.count || data.length);
-        res.send(data.entities || data);
+        res.set('X-Total-Count', data.count ? data.count : 0);
+        res.send(data.entities || []);
       })
       .catch((e) => {
         res.json(e.message);
@@ -76,20 +76,18 @@ const createController = function createController(options) {
 
   instance.delete = async (req, res) => {
     const { id } = req.params;
-    let product;
-    try {
-      product = await service.findById({ id });
-    } catch (error) {
-      return res.status(500).json({ error });
-    }
 
     return service.delete(id)
       .then((response) => {
-        if (!response.success) {
-          res.status(404).json({});
-        } else {
-          res.status(200).json(product);
+        if (!response) {
+          return res.status(404).send(null);
         }
+        return res.status(200).json(response);
+      })
+      .catch((e) => {
+        return res.status(500).json({
+          error: e.message,
+        });
       });
   };
 

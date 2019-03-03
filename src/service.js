@@ -1,40 +1,65 @@
-// import createCountModel from './countModel';
-
+/*eslint-disable */
+const debug = require('debug');
+const log = debug('micro-stack:service');
 const createService = function Service(serviceOptions) {
   const Model = serviceOptions.model;
   const instance = {};
 
   instance.create = async (params) => {
-    const newModel = Model.sanitize(params);
-    const modelToCreate = new Model(newModel);
-    try {
-      const createdModel = await modelToCreate.save();
-      return createdModel.plain();
-    } catch (e) {
-      throw e;
+    let modelToCreate = new Model(params);
+    if (typeof Model.beforeCreate === 'function') {
+      try {
+        modelToCreate = await Model.beforeCreate(modelToCreate);
+      } catch (e) {
+        log(e);
+        return false;
+      }
     }
+    return modelToCreate.save()
+      .then(data => {
+        if (typeof Model.afterCreate === 'function') {
+          Model.afterCreate(data)
+            .catch(e => {
+              log(e);
+            })
+        }
+        return data;
+      })
   };
 
-  instance.findById = params => new Promise((res, rej) => Model.get(params.id)
-    .then((entity) => {
-      res(entity.plain());
-    })
-    .catch((e) => {
-      rej(e);
-    }));
+  instance.findById = params => Model.get(params.id);
 
-  instance.findOne = async (params, options) => {
-    let entity;
-    try {
-      entity = await Model.findOne(params, null, null, options);
-      return entity.plain();
-    } catch (e) {
-      const { code } = e;
-      if (code === 'ERR_ENTITY_NOT_FOUND') {
-        return null;
-      }
-      throw e;
+  instance.findOne = async (params) => {
+    const { primary_search, secondary_search } = params;
+
+    if (!primary_search) {
+      throw new Error('primary_search is required');
     }
+    // const otherParams = JSON.parse(JSON.stringify(params));
+    // delete otherParams.primary_search;
+
+    const [pk, pk_val] = primary_search.split(':');
+    const query = Model.queryOne(pk).eq(pk_val);
+
+    if (secondary_search) {
+      const [sk, sk_val] = primary_search.split(':');
+      if (sk && sk_val) {
+        query.where(sk).eq(sk_val)
+      }
+    }
+    // Object.keys(otherParams).forEach(param => {
+    //   const filter = {};
+    //   filter[param] = otherParams[param];
+    //   query.filter(filter)
+    // });
+
+    // Object.keys(params).forEach((key) => {
+    //   if (key.startsWith('_') !== true) {
+    //     query.where([key, params[key]]);
+    //   }
+    // });
+    return query.exec();
+
   };
 
   instance.findByIds = (ids) => {
@@ -43,53 +68,94 @@ const createService = function Service(serviceOptions) {
   };
 
   instance.findCount = (params) => {
-    const countOptions = {
-      ...params,
-      limit: 99999,
-      offset: 0,
-    };
-    return Model.list(countOptions);
+    const { primary_search, secondary_search } = params;
+    if (!primary_search) {
+      throw new Error('primary_search is required');
+    }
+    // const otherParams = JSON.parse(JSON.stringify(params));
+    // delete otherParams.primary_search;
+
+    const [pk, pk_val] = primary_search.split(':');
+    const query = Model.queryOne(pk).eq(pk_val);
+    if (secondary_search) {
+      const [sk, sk_val] = primary_search.split(':');
+      if (sk && sk_val) {
+        query.where(sk).eq(sk_val)
+      }
+    }
+    // Object.keys(otherParams).forEach(param => {
+    //   const filter = {};
+    //   filter[param] = otherParams[param];
+    //   query.filter(filter)
+    // });
+    return query.count().exec();
   };
 
   instance.findList = async (params, options = {}) => {
-    const { _start = 0, _end = 10 } = params;
+    const { _start = 0, _end = 10, primary_search, secondary_search } = params;
+    if (!primary_search) {
+      throw new Error('primary_search is required');
+    }
     const { includeCount = true } = options;
     const queryOptions = {
       limit: _end - _start,
       offset: _start || 0,
       // order: { property: params._sort || "id", descending: params.descending === "DESC" },
-      filters: []
     };
+    // const otherParams = JSON.parse(JSON.stringify(params));
+    // delete otherParams.primary_search;
 
-    // const filtered = Object.keys(params)
-    //   .filter(key => key.startsWith('_') !== true)
-    //   .reduce((obj, key) => {
-    //     const newObj = {};
-    //     newObj[key] = params[key];
-    //     return newObj;
-    //   }, {});
+    const [pk, pk_val] = primary_search.split(':');
+    const query = Model.queryOne(pk).eq(pk_val);
 
-    Object.keys(params).forEach((key) => {
-      if (key.startsWith('_') !== true) {
-        queryOptions.filters.push([key, params[key]]);
+    if (secondary_search) {
+      const [sk, sk_val] = primary_search.split(':');
+      if (sk && sk_val) {
+        query.where(sk).eq(sk_val)
       }
-    });
+    }
+    // Object.keys(otherParams).forEach(param => {
+    //   const filter = {};
+    //   filter[param] = otherParams[param];
+    //   query.filter(filter)
+    // });
+    query.limit(queryOptions.limit);
 
-    const { entities } = await Model.list(queryOptions);
-    const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
+    // Object.keys(params).forEach((key) => {
+    //   if (key.startsWith('_') !== true) {
+    //     query.where([key, params[key]]);
+    //   }
+    // });
+    const entities = await query.exec();
+    const countEntities = includeCount ? await instance.findCount(params) : entities.length;
     return {
       entities,
-      count: countEntities.entities.length,
+      count: countEntities.count,
     };
   };
 
   instance.update = async (params) => {
     const { id } = params;
-    const modelUpdates = await Model.update(id, Model.sanitize(params));
-    return modelUpdates.plain();
+    return Model.update(id, params);
   };
 
-  instance.delete = id => Model.delete(id);
+  instance.delete = async (id, originalItem) => {
+    const item = await instance.findById({ id });
+    if (!item) {
+      return false
+    }
+
+    return Model.delete(id)
+      .then(() => {
+        if (typeof Model.afterDelete === 'function') {
+          Model.afterDelete(originalItem)
+            .catch(e => {
+              log(e);
+            })
+        }
+        return originalItem;
+      })
+  };
 
   return instance;
 };
