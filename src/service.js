@@ -106,7 +106,7 @@ const createService = function Service(serviceOptions) {
     // delete otherParams.primary_search;
 
     const [pk, pk_val] = primary_search.split(':');
-    const query = Model.queryOne(pk).eq(pk_val);
+    const query = Model.query(pk).eq(pk_val);
 
     if (secondary_search) {
       const [sk, sk_val] = primary_search.split(':');
