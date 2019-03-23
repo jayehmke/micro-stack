@@ -27,7 +27,7 @@ const createService = function Service(serviceOptions) {
   };
 
   instance.findList = async (params, options = {}) => {
-    const { _start = 0, _end = 10, primary_search, secondary_search } = params;
+    const { _start = 0, _end = 10 } = params;
 
     const { includeCount = true } = options;
     const queryOptions = {
@@ -36,8 +36,10 @@ const createService = function Service(serviceOptions) {
       // order: { property: params._sort || "id", descending: params.descending === "DESC" },
     };
 
+    const filters = params.filter(param => !param.startsWith('_'));
+
     const entities = await Model.findAll({
-      where: params,
+      where: filters,
       limit: queryOptions.limit,
       offset: queryOptions.offset,
     });
