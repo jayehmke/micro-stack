@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
@@ -38,7 +38,8 @@
     "babel-polyfill": "^6.26.0",
     "debug": "^4.1.1",
     "express-validator": "^5.3.1",
-    "joi": "^14.3.1"
+    "joi": "^14.3.1",
+    "ms": "^2.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
