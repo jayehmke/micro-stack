@@ -36,7 +36,12 @@ const createService = function Service(serviceOptions) {
       // order: { property: params._sort || "id", descending: params.descending === "DESC" },
     };
 
-    const filters = params.filter(param => !param.startsWith('_'));
+    const filters = Object.keys(params)
+      .filter(key => !key.startsWith('_'))
+      .reduce((obj, key) => {
+        obj[key] = params[key];
+        return obj;
+      }, {});
 
     const entities = await Model.findAll({
       where: filters,

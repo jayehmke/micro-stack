@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
