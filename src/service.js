@@ -48,7 +48,7 @@ const createService = function Service(serviceOptions) {
       limit: queryOptions.limit,
       offset: queryOptions.offset,
     });
-    const countEntities = includeCount ? await instance.findCount(params) : entities.length;
+    const countEntities = includeCount ? await instance.findCount(filters) : entities.length;
     return {
       entities,
       count: countEntities.count,
