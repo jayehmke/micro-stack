@@ -48,7 +48,6 @@ const createService = function Service(serviceOptions) {
       limit: queryOptions.limit,
       offset: queryOptions.offset,
     });
-    console.log({entities})
     return {
       entities: entities.rows,
       count: entities.count,

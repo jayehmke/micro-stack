@@ -48,7 +48,6 @@ const createController = function createController(options) {
 
     return serviceCall(req.query)
       .then((data) => {
-        console.log({data})
         res.set('X-Total-Count', data.count ? data.count : 0);
         res.send(data.entities || []);
       })
