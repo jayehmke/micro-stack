@@ -43,15 +43,15 @@ const createService = function Service(serviceOptions) {
         return obj;
       }, {});
 
-    const entities = await Model.findAll({
+    const entities = await Model.findAndCountAll({
       where: filters,
       limit: queryOptions.limit,
       offset: queryOptions.offset,
     });
-    const countEntities = includeCount ? await instance.findCount(filters) : entities.length;
+    console.log({entities})
     return {
-      entities,
-      count: countEntities.count,
+      entities: entities.rows,
+      count: entities.count,
     };
   };
 
