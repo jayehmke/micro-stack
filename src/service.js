@@ -16,8 +16,11 @@ const createService = function Service(serviceOptions) {
   };
 
   instance.findByIds = (ids) => {
-    const findPromises = ids.map(id => instance.findById({ id }));
-    return Promise.all(findPromises);
+    return Model.findAll({
+      where: {
+        id: ids,
+      }
+    })
   };
 
   instance.findCount = (params) => {
@@ -57,9 +60,11 @@ const createService = function Service(serviceOptions) {
   instance.update = async (params) => {
     const { id } = params;
     delete params.id;
-    return Model.update(params, {
-      where: { id },
-    });
+    const item = await instance.findById({ id });
+    if (!item) {
+      return false;
+    }
+    return item.update(params);
   };
 
   instance.delete = async (id) => {
@@ -68,9 +73,7 @@ const createService = function Service(serviceOptions) {
       return false
     }
 
-    return Model.destroy({
-      where: { id },
-    })
+    return item.destroy();
   };
 
   return instance;

@@ -67,28 +67,33 @@ const createController = function createController(options) {
       ...req.body,
     };
 
-    return service.update(params)
-      .then(data => res.json(data))
-      .catch(e => res.status(500).json({
-        error: e.code,
-      }));
+    try {
+      const updatedData = await service.update(params);
+      if (!updatedData) {
+        res.status(404).json({ error: 'Entity Not Found' });
+      }
+      return res.status(200).json(updatedData);
+    } catch (e) {
+      return res.status(500).json({
+        error: e,
+      });
+    }
   };
 
   instance.delete = async (req, res) => {
     const { id } = req.params;
 
-    return service.delete(id)
-      .then((response) => {
-        if (!response) {
-          return res.status(404).send(null);
-        }
-        return res.status(200).json(response);
-      })
-      .catch((e) => {
-        return res.status(500).json({
-          error: e.message,
-        });
+    try {
+      const deletedData = await service.delete(id);
+      if (!deletedData) {
+        res.status(404).json({ error: 'Entity Not Found' });
+      }
+      return res.status(200).json(deletedData);
+    } catch (e) {
+      return res.status(500).json({
+        error: e,
       });
+    }
   };
 
   return instance;
