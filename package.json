@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "1.4.25",
+  "version": "1.4.26",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
@@ -35,11 +35,11 @@
   "homepage": "https://github.com/flexdinesh/micro-stack#readme",
   "dependencies": {
     "@google-cloud/datastore": "^3.1.0",
-    "@google-cloud/pubsub": "^0.22.2",
+    "@google-cloud/pubsub": "^0.28.1",
     "babel-polyfill": "^6.26.0",
     "debug": "^4.1.1",
     "express-validator": "^5.3.1",
-    "gstore-node": "^4.3.3",
+    "gstore-node": "^6.0.1",
     "joi": "^14.3.1"
   },
   "devDependencies": {
