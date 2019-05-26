@@ -1,6 +1,6 @@
 {
   "name": "@jasonehmke/micro-stack",
-  "version": "1.4.27",
+  "version": "1.4.28",
   "description": "A library to interface with GCP Serverless Functions and PubSub",
   "main": "./lib/index.js",
   "scripts": {
@@ -38,6 +38,7 @@
     "@google-cloud/pubsub": "^0.28.1",
     "babel-polyfill": "^6.26.0",
     "debug": "^4.1.1",
+    "express": "^4.16.4",
     "express-validator": "^5.3.1",
     "gstore-node": "^6.0.1",
     "joi": "^14.3.1"
