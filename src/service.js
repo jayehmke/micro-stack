@@ -1,14 +1,25 @@
 // import createCountModel from './countModel';
+/* eslint-disable */
+
 
 const createService = function Service(serviceOptions) {
   const Model = serviceOptions.model;
+  const {
+    preCreate, postCreate, preUpdate, postUpdate, preDelete, postDelete
+  } = serviceOptions;
   const instance = {};
 
   instance.create = async (params) => {
     const newModel = Model.sanitize(params);
     const modelToCreate = new Model(newModel);
     try {
+      if (typeof preCreate === 'function') {
+        preCreate();
+      }
       const createdModel = await modelToCreate.save();
+      if (typeof postCreate === 'function') {
+        postCreate();
+      }
       return createdModel.plain();
     } catch (e) {
       throw e;
@@ -85,11 +96,26 @@ const createService = function Service(serviceOptions) {
 
   instance.update = async (params) => {
     const { id } = params;
+    if (typeof preUpdate === 'function') {
+      preUpdate();
+    }
     const modelUpdates = await Model.update(id, Model.sanitize(params));
+    if (typeof postUpdate === 'function') {
+      postUpdate();
+    }
     return modelUpdates.plain();
   };
 
-  instance.delete = id => Model.delete(id);
+  instance.delete = async (id) => {
+    if (typeof preDelete === 'function') {
+      preDelete();
+    }
+    const entity = await Model.delete(id);
+    if (typeof postDelete === 'function') {
+      postDelete();
+    }
+    return entity;
+  };
 
   return instance;
 };

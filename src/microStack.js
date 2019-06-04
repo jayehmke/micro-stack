@@ -17,14 +17,13 @@ const MicroStack = function MicroStack(options) {
   const instanceController = createController({
     model,
   });
-
   const emptyMiddleware = (req, res, next) => next();
 
   router.post(`/${path}`, middleware.create || emptyMiddleware, instanceController.create);
   router.get(`/${path}`, middleware.gets || emptyMiddleware, instanceController.reads);
   router.get(`/${path}/:id`, middleware.get || emptyMiddleware, instanceController.read);
   router.put(`/${path}/:id`, middleware.create || emptyMiddleware, instanceController.update);
-  router.delete(`/${path}/:id`, middleware.create || emptyMiddleware, instanceController.delete);
+  router.delete(`/${path}/:id`, middleware.delete || emptyMiddleware, instanceController.delete);
 
   return router;
 };

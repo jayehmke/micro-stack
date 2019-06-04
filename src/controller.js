@@ -76,19 +76,18 @@ const createController = function createController(options) {
 
   instance.delete = async (req, res) => {
     const { id } = req.params;
-    let product;
+    let entity;
     try {
-      product = await service.findById({ id });
+      entity = await service.findById({ id });
     } catch (error) {
       return res.status(500).json({ error });
     }
-
     return service.delete(id)
       .then((response) => {
         if (!response.success) {
           res.status(404).json({});
         } else {
-          res.status(200).json(product);
+          res.status(200).json(entity);
         }
       });
   };
