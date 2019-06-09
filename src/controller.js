@@ -4,7 +4,7 @@ const createService = require('./service');
 const createController = function createController(options) {
   const instance = {};
   const service = createService({
-    model: options.model,
+    ...options,
   });
 
   instance.create = (req, res) => {
