@@ -1,6 +1,7 @@
 // import createCountModel from './countModel';
-/* eslint-disable */
+const debug = require('debug');
 
+const log = debug('MicroStack.Service');
 
 const createService = function Service(serviceOptions) {
   const Model = serviceOptions.model;
@@ -14,14 +15,16 @@ const createService = function Service(serviceOptions) {
     const modelToCreate = new Model(newModel);
     try {
       if (typeof preCreate === 'function') {
-        preCreate();
+        preCreate(newModel);
       }
       const createdModel = await modelToCreate.save();
+      const plainModel = createdModel.plain();
       if (typeof postCreate === 'function') {
-        postCreate();
+        postCreate(plainModel);
       }
-      return createdModel.plain();
+      return plainModel;
     } catch (e) {
+      log(e.message);
       throw e;
     }
   };
@@ -96,14 +99,16 @@ const createService = function Service(serviceOptions) {
 
   instance.update = async (params) => {
     const { id } = params;
+    const sanitizedData = Model.sanitize(params);
     if (typeof preUpdate === 'function') {
-      preUpdate();
+      preUpdate(sanitizedData);
     }
-    const modelUpdates = await Model.update(id, Model.sanitize(params));
+    const modelUpdates = await Model.update(id, sanitizedData);
+    const plainModel = modelUpdates.plain();
     if (typeof postUpdate === 'function') {
-      postUpdate();
+      postUpdate(plainModel);
     }
-    return modelUpdates.plain();
+    return plainModel;
   };
 
   instance.delete = async (id) => {
@@ -112,7 +117,7 @@ const createService = function Service(serviceOptions) {
     }
     const entity = await Model.delete(id);
     if (typeof postDelete === 'function') {
-      postDelete();
+      postDelete(entity);
     }
     return entity;
   };
