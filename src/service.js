@@ -115,12 +115,12 @@ const createService = function Service(serviceOptions) {
     if (typeof preDelete === 'function') {
       preDelete();
     }
-    const entity = await Model.delete(id);
+    const original = await Model.get(id);
+    await Model.delete(id);
     if (typeof postDelete === 'function') {
-      postDelete(entity);
+      postDelete(original);
     }
-    console.log(entity);
-    return entity;
+    return original;
   };
 
   return instance;
