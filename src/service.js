@@ -120,7 +120,7 @@ const createService = function Service(serviceOptions) {
     if (typeof postDelete === 'function') {
       postDelete(original);
     }
-    return original;
+    return original.plain();
   };
 
   return instance;
