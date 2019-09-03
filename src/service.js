@@ -65,7 +65,7 @@ const createService = function Service(serviceOptions) {
     return Model.list(countOptions);
   };
 
-  instance.findList = async (params, options = {}) => {
+  instance.findList = async (params = {}, options = {}) => {
     const { _start = 0, _end = 10 } = params;
     const { includeCount = true } = options;
     const queryOptions = {
@@ -119,7 +119,7 @@ const createService = function Service(serviceOptions) {
     if (typeof postDelete === 'function') {
       postDelete(entity);
     }
-    return entity;
+    return entity.plain();
   };
 
   return instance;

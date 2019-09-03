@@ -12,10 +12,10 @@ const MicroStack = function MicroStack(options) {
     delete: null,
   };
   const {
-    router, path, model, middleware = middlewareDefaults
+    router, path, middleware = middlewareDefaults
   } = options;
   const instanceController = createController({
-    model,
+    ...options,
   });
   const emptyMiddleware = (req, res, next) => next();
 
