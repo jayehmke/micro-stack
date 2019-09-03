@@ -119,7 +119,8 @@ const createService = function Service(serviceOptions) {
     if (typeof postDelete === 'function') {
       postDelete(entity);
     }
-    return entity.plain();
+    console.log(entity);
+    return entity;
   };
 
   return instance;
