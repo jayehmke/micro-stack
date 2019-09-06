@@ -41,7 +41,8 @@ const createService = function Service(serviceOptions) {
     let entity;
     try {
       entity = await Model.findOne(params, null, null, options);
-      return entity.plain();
+      if (entity) return entity.plain();
+      return null;
     } catch (e) {
       const { code } = e;
       if (code === 'ERR_ENTITY_NOT_FOUND') {
