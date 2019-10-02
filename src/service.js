@@ -91,11 +91,15 @@ const createService = function Service(serviceOptions) {
     });
 
     if (options.order) {
-      queryOptions.order = { property: options.order.property, descending: options.order.descending };
+      queryOptions.order = {
+        property: options.order.property,
+        descending: options.order.descending
+      };
     }
 
     return Model.list(queryOptions);
-    // const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
+    // const countEntities = includeCount ?
+    // await instance.findCount(queryOptions) : entities.length;
     // return {
     //   entities,
     //   count: countEntities.entities.length,
