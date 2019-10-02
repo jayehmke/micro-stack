@@ -68,7 +68,7 @@ const createService = function Service(serviceOptions) {
 
   instance.findList = async (params = {}, options = {}) => {
     const { _start = 0, _end = 10 } = params;
-    const { includeCount = true } = options;
+    // const { includeCount = false } = options;
     const queryOptions = {
       limit: _end - _start,
       offset: _start || 0,
@@ -90,12 +90,16 @@ const createService = function Service(serviceOptions) {
       }
     });
 
-    const { entities } = await Model.list(queryOptions);
-    const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
-    return {
-      entities,
-      count: countEntities.entities.length,
-    };
+    if (options.order) {
+      queryOptions.order = { property: options.order.property, descending: options.order.descending };
+    }
+
+    return Model.list(queryOptions);
+    // const countEntities = includeCount ? await instance.findCount(queryOptions) : entities.length;
+    // return {
+    //   entities,
+    //   count: countEntities.entities.length,
+    // };
   };
 
   instance.update = async (params) => {
