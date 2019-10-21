@@ -20,7 +20,7 @@ const createService = function Service(serviceOptions) {
       const createdModel = await modelToCreate.save();
       const plainModel = createdModel.plain();
       if (typeof postCreate === 'function') {
-        postCreate(plainModel);
+        postCreate(createdModel);
       }
       return plainModel;
     } catch (e) {
@@ -115,7 +115,7 @@ const createService = function Service(serviceOptions) {
     const modelUpdates = await Model.update(id, sanitizedData);
     const plainModel = modelUpdates.plain();
     if (typeof postUpdate === 'function') {
-      postUpdate(plainModel);
+      postUpdate(modelUpdates);
     }
     return plainModel;
   };
