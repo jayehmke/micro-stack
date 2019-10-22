@@ -31,7 +31,7 @@ const createService = function Service(serviceOptions) {
 
   instance.findById = params => new Promise((res, rej) => Model.get(params.id)
     .then((entity) => {
-      res(entity.plain());
+      res(entity);
     })
     .catch((e) => {
       rej(e);
