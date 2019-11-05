@@ -15,12 +15,12 @@ const createService = function Service(serviceOptions) {
     const modelToCreate = new Model(newModel);
     try {
       if (typeof preCreate === 'function') {
-        preCreate(newModel);
+        await preCreate(newModel);
       }
       const createdModel = await modelToCreate.save();
       const plainModel = createdModel.plain();
       if (typeof postCreate === 'function') {
-        postCreate(createdModel);
+        await postCreate(createdModel);
       }
       return plainModel;
     } catch (e) {
@@ -107,29 +107,39 @@ const createService = function Service(serviceOptions) {
   };
 
   instance.update = async (params) => {
-    const { id } = params;
-    const sanitizedData = Model.sanitize(params);
-    if (typeof preUpdate === 'function') {
-      preUpdate(sanitizedData);
+    try {
+      const { id } = params;
+      const sanitizedData = Model.sanitize(params);
+      if (typeof preUpdate === 'function') {
+        await preUpdate(sanitizedData);
+      }
+      const modelUpdates = await Model.update(id, sanitizedData);
+      const plainModel = modelUpdates.plain();
+      if (typeof postUpdate === 'function') {
+        await postUpdate(modelUpdates);
+      }
+      return plainModel;
+    } catch (e) {
+      log.error(e.message);
+      throw e;
     }
-    const modelUpdates = await Model.update(id, sanitizedData);
-    const plainModel = modelUpdates.plain();
-    if (typeof postUpdate === 'function') {
-      postUpdate(modelUpdates);
-    }
-    return plainModel;
   };
 
   instance.delete = async (id) => {
-    if (typeof preDelete === 'function') {
-      preDelete();
+    try {
+      if (typeof preDelete === 'function') {
+        await preDelete();
+      }
+      const original = await Model.get(id);
+      await Model.delete(id);
+      if (typeof postDelete === 'function') {
+        await postDelete(original);
+      }
+      return original.plain();
+    } catch (e) {
+      log.error(e.messsage);
+      throw e;
     }
-    const original = await Model.get(id);
-    await Model.delete(id);
-    if (typeof postDelete === 'function') {
-      postDelete(original);
-    }
-    return original.plain();
   };
 
   return instance;
