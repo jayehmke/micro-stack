@@ -84,6 +84,8 @@ const createService = function Service(serviceOptions) {
     //     return newObj;
     //   }, {});
 
+
+
     Object.keys(params).forEach((key) => {
       if (key.startsWith('_') !== true) {
         queryOptions.filters.push([key, params[key]]);
@@ -96,8 +98,14 @@ const createService = function Service(serviceOptions) {
         descending: options.order.descending
       };
     }
+    const query = Model.list(queryOptions);
+    if (options.populate) {
+      for (let x = 0, n = options.populate.length; x < n; x += 1) {
+        query.populate(options.populate[x])
+      }
+    }
 
-    return Model.list(queryOptions);
+    return query;
     // const countEntities = includeCount ?
     // await instance.findCount(queryOptions) : entities.length;
     // return {
