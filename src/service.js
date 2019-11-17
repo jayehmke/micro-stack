@@ -84,8 +84,6 @@ const createService = function Service(serviceOptions) {
     //     return newObj;
     //   }, {});
 
-
-
     Object.keys(params).forEach((key) => {
       if (key.startsWith('_') !== true) {
         queryOptions.filters.push([key, params[key]]);
@@ -101,7 +99,7 @@ const createService = function Service(serviceOptions) {
     const query = Model.list(queryOptions);
     if (options.populate) {
       for (let x = 0, n = options.populate.length; x < n; x += 1) {
-        query.populate(options.populate[x])
+        query.populate(options.populate[x]);
       }
     }
 
@@ -135,15 +133,15 @@ const createService = function Service(serviceOptions) {
 
   instance.delete = async (id) => {
     try {
-      if (typeof preDelete === 'function') {
-        await preDelete();
-      }
       const original = await Model.get(id);
+      if (typeof preDelete === 'function') {
+        await preDelete(original);
+      }
       await Model.delete(id);
       if (typeof postDelete === 'function') {
         await postDelete(original);
       }
-      return original.plain();
+      return original;
     } catch (e) {
       log.error(e.messsage);
       throw e;
