@@ -126,7 +126,7 @@ const createService = function Service(serviceOptions) {
       }
       return plainModel;
     } catch (e) {
-      log.error(e.message);
+      log(e.message);
       throw e;
     }
   };
@@ -143,7 +143,7 @@ const createService = function Service(serviceOptions) {
       }
       return original;
     } catch (e) {
-      log.error(e.messsage);
+      log(e.messsage);
       throw e;
     }
   };
