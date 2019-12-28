@@ -73,7 +73,8 @@ const createService = function Service(serviceOptions) {
       limit: _end - _start,
       offset: _start || 0,
       // order: { property: params._sort || "id", descending: params.descending === "DESC" },
-      filters: []
+      filters: [],
+      showKey: true,
     };
 
     // const filtered = Object.keys(params)
